@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useCallback } from 'react';
 import {
   View,
   Image,
@@ -8,13 +8,26 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import { useNavigation } from '@react-navigation/native';
+import { FormHandles } from '@unform/core';
+import { Form } from '@unform/mobile';
 import logoImg from '../../assets/logo.png';
 import { Input, Button } from '../../components';
 
 import { Container, Title, BackToSignIn, BackToSignInText } from './styles';
 
+interface IDataFormSubmit {
+  name: string;
+  email: string;
+  password: string;
+}
+
 const SignUp: React.FC = () => {
+  const formRef = useRef<FormHandles>(null);
   const { goBack } = useNavigation();
+
+  const handleSignUp = useCallback((data: IDataFormSubmit) => {
+    console.log(data);
+  }, []);
 
   return (
     <>
@@ -33,11 +46,19 @@ const SignUp: React.FC = () => {
             <View>
               <Title>Crie sua conta</Title>
             </View>
-            <Input name="name" icon="user" placeholder="Nome " />
-            <Input name="email" icon="mail" placeholder="E-mail" />
-            <Input name="password" icon="lock" placeholder="Senha" />
+            <Form ref={formRef} onSubmit={handleSignUp}>
+              <Input name="name" icon="user" placeholder="Nome " />
+              <Input name="email" icon="mail" placeholder="E-mail" />
+              <Input name="password" icon="lock" placeholder="Senha" />
 
-            <Button onPress={() => {}}>Criar conta</Button>
+              <Button
+                onPress={() => {
+                  formRef.current?.submitForm();
+                }}
+              >
+                Criar conta
+              </Button>
+            </Form>
           </Container>
         </ScrollView>
       </KeyboardAvoidingView>
